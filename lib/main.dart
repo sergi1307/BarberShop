@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-// Importamos tu nueva pantalla (el editor debería reconocer esta ruta)
-import 'views/screens/networkoverview.dart'; 
+// Importamos la nueva pantalla de reservas
+import 'views/screens/reservas.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -13,12 +13,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Barber Shop',
-      debugShowCheckedModeBanner: false, // Esto quita la etiqueta roja de "DEBUG" de la esquina
+      debugShowCheckedModeBanner: false, 
       theme: ThemeData(
         useMaterial3: true,
+        // Configuramos el brillo a claro para que el diseño se vea limpio
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
       ),
-      // ¡Aquí hacemos el cambiazo! Le decimos que arranque con tu diseño
-      home: const LuxeCutsScreen(),
+      // Ahora la app arrancará directamente en la pantalla de "Mis Reservas"
+      home: const ReservationsScreen(),
     );
   }
 }

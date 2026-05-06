@@ -1,7 +1,33 @@
 import 'package:flutter/material.dart';
+// Asegúrate de que este nombre coincida con tu archivo de reservas
+import 'reservas.dart'; 
 
 class LuxeCutsScreen extends StatelessWidget {
   const LuxeCutsScreen({super.key});
+
+  final List<Map<String, dynamic>> adsData = const [
+    {
+      'name': 'Modern Tech Gadgets',
+      'desc': 'Discover the latest in minimalist technology and home automation solutions.',
+      'image': 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
+      'tag': 'TECHNOLOGY',
+      'active': true,
+    },
+    {
+      'name': 'Urban Barber Essentials',
+      'desc': 'The best pomades and razors for the modern gentleman. Professional quality.',
+      'image': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80',
+      'tag': 'FASHION',
+      'active': true,
+    },
+    {
+      'name': 'Mountain Coffee Roasters',
+      'desc': 'Organic beans roasted at high altitude for a unique and bold flavor profile.',
+      'image': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80',
+      'tag': 'FOOD & BEV',
+      'active': false,
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -12,170 +38,142 @@ class LuxeCutsScreen extends StatelessWidget {
       ),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.black,
           elevation: 0,
           scrolledUnderElevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black87),
-            onPressed: () {},
+          iconTheme: const IconThemeData(color: Colors.white),
+          leading: const Padding(
+            padding: EdgeInsets.only(left: 16.0),
+            child: Center(
+              child: CircleAvatar(
+                radius: 16,
+                backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=11'),
+              ),
+            ),
           ),
           title: const Text(
             'LUXE CUTS AD',
             style: TextStyle(
-              color: Colors.black87,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
-              letterSpacing: -0.5,
+              letterSpacing: 1.2,
             ),
           ),
-          actions: const [
-            Padding(
-              padding: EdgeInsets.only(right: 16.0),
-              child: CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.grey,
-                backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=11'),
-              ),
-            ),
-          ],
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0), // Un pelín menos de padding ayuda
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Network Overview',
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                'Featured Ads',
+                style: TextStyle(
+                  fontSize: 24, 
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-              const SizedBox(height: 16),
-              // Usamos Flexible/Expanded dentro del Row para evitar overflow horizontal
-              Row(
-                children: [
-                  Expanded(child: _buildStatCard('ACTIVE ADS', '128', Icons.campaign, '+12% hoy', Icons.trending_up, Colors.green)),
-                  const SizedBox(width: 12),
-                  Expanded(child: _buildStatCard('TOTAL REACH', '42.5K', Icons.groups, 'Active analytics', Icons.visibility, Colors.blue)),
-                ],
+              const SizedBox(height: 20),
+              
+              Column(
+                children: adsData.map((ad) => _buildFeaturedCard(ad)).toList(),
               ),
-              const SizedBox(height: 32),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Advertiser Directory',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  Flexible(
-                    child: Text(
-                      '4 of 32',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              _buildAdvertiserCard('Precision Grooming Co.', 'PREMIUM', 'Oct 23', '4.2%', true, Icons.spa),
-              _buildAdvertiserCard('Midnight Chronos', 'LUXURY', 'Dec 23', '2.8%', true, Icons.watch),
-              _buildAdvertiserCard('Old Town Distillery', 'LIFESTYLE', 'Jan 24', '--', false, Icons.sports_bar),
-              _buildAdvertiserCard('Iron & Oak Gym', 'HEALTH', 'Feb 24', '5.1%', true, Icons.fitness_center),
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
-          backgroundColor: Colors.black87,
-          foregroundColor: Colors.white,
-          child: const Icon(Icons.add),
+          backgroundColor: Colors.black,
+          child: const Icon(Icons.add, color: Colors.white),
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.black87,
+          selectedItemColor: Colors.black,
           unselectedItemColor: Colors.grey[400],
-          currentIndex: 2,
+          currentIndex: 2, // Mantenemos seleccionado el icono de Ads (índice 2)
+          onTap: (index) {
+            // Si el usuario pulsa el índice 0 (Reservas), volvemos atrás
+            if (index == 0) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ReservationsScreen()),
+              );
+            }
+          },
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Dir'),
-            BottomNavigationBarItem(icon: Icon(Icons.analytics), label: 'Stats'),
+            // Hemos actualizado los iconos para que sean iguales en ambas pantallas
+            BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Reservas'),
+            BottomNavigationBarItem(icon: Icon(Icons.location_on_outlined), label: 'Locales'),
             BottomNavigationBarItem(icon: Icon(Icons.campaign), label: 'Ads'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+            BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData bgIcon, String subtitle, IconData subIcon, Color iconColor) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
+  Widget _buildFeaturedCard(Map<String, dynamic> ad) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 24),
+      elevation: 2,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, 
-            style: TextStyle(color: Colors.grey[500], fontSize: 9, fontWeight: FontWeight.bold),
-            overflow: TextOverflow.ellipsis,
+          Image.network(
+            ad['image'],
+            height: 180,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                height: 180,
+                color: Colors.grey[300],
+                child: const Center(child: Icon(Icons.broken_image, color: Colors.grey, size: 40)),
+              );
+            },
           ),
-          const SizedBox(height: 4),
-          FittedBox( // Esto hace que el número se encoja si no cabe
-            fit: BoxFit.scaleDown,
-            child: Text(value, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Icon(subIcon, size: 12, color: iconColor),
-              const SizedBox(width: 4),
-              Expanded(child: Text(subtitle, style: TextStyle(color: iconColor, fontSize: 9), overflow: TextOverflow.ellipsis)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAdvertiserCard(String name, String tag, String date, String ctr, bool isActive, IconData icon) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40, height: 40,
-            decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(8)),
-            child: Icon(icon, color: Colors.grey[600], size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded( // CLAVE: Esto evita el overflow si el nombre es largo
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, 
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      ad['tag'],
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    Icon(
+                      Icons.circle,
+                      size: 10,
+                      color: ad['active'] ? Colors.green : Colors.red,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  ad['name'],
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  ad['desc'],
+                  style: TextStyle(color: Colors.grey[600], fontSize: 13, height: 1.4),
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                Text('$tag • $date', style: TextStyle(fontSize: 11, color: Colors.grey[500])),
               ],
             ),
           ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(ctr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              Text(isActive ? 'Active' : 'End', style: TextStyle(fontSize: 10, color: isActive ? Colors.green : Colors.red)),
-            ],
-          ),
-          const Icon(Icons.chevron_right, color: Colors.grey, size: 18),
         ],
       ),
     );
