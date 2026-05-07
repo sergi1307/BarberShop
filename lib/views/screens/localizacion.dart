@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'profesional.dart';
 
 class SelectLocationScreen extends StatefulWidget {
@@ -20,7 +19,6 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A1A1A),
         elevation: 0,
-        // Quitamos la flecha de volver por defecto porque la pondremos abajo
         automaticallyImplyLeading: false,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -30,7 +28,7 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
               Icons.cut,
               color: Colors.amber,
               size: 16,
-            ), // Simulando el logo dorado
+            ),
           ),
         ),
         title: const Text(
@@ -45,7 +43,6 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
       body: Column(
         children: [
           const SizedBox(height: 30),
-          // --- CABECERA DE TEXTOS ---
           const Text(
             'DIRECCIÓN',
             style: TextStyle(
@@ -60,14 +57,11 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
             'Selecciona la dirección',
             style: TextStyle(
               fontSize: 14,
-              color: Color(
-                0xFF4A8E9F,
-              ), // Ese tono azulado/verdoso de la captura
+              color: Color(0xFF4A8E9F),
               fontWeight: FontWeight.w600,
             ),
           ),
 
-          // Usamos Spacer para empujar las tarjetas hacia el centro
           const Spacer(),
 
           // --- TARJETAS DE DIRECCIÓN ---
@@ -89,13 +83,10 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
             ),
           ),
 
-          const Spacer(
-            flex: 2,
-          ), // Doble de espacio abajo para que quede como en la foto
+          const Spacer(flex: 2),
         ],
       ),
 
-      // --- BARRA INFERIOR DE NAVEGACIÓN (Pasos) ---
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -106,10 +97,8 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Botón Volver
               GestureDetector(
-                onTap: () =>
-                    Navigator.pop(context), // Vuelve a la pantalla anterior
+                onTap: () => Navigator.pop(context),
                 child: const Text(
                   'VOLVER',
                   style: TextStyle(
@@ -120,7 +109,6 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                 ),
               ),
 
-              // Indicadores de progreso (Puntitos)
               Row(
                 children: [
                   _buildDot(isActive: true),
@@ -131,27 +119,30 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                 ],
               ),
 
-              // Botón Siguiente
               GestureDetector(
                 onTap: selectedLocation != 0
                     ? () {
+                        // --- ENVIAMOS LA DIRECCIÓN REAL SEGÚN EL ID ---
+                        String direccionSeleccionada = selectedLocation == 1 
+                            ? "C/ Escultor Toran 2 Pta 4" 
+                            : "Calle del Niu, 40";
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                const SelectProfessionalScreen(),
+                            builder: (context) => SelectProfessionalScreen(
+                              location: direccionSeleccionada,
+                            ),
                           ),
                         );
                       }
-                    : null, // Si no hay nada seleccionado, no hace nada (opcional)
+                    : null,
                 child: Text(
                   'SIGUIENTE',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: selectedLocation != 0
-                        ? Colors.black87
-                        : Colors.grey, // Cambia de color si hay selección
+                    color: selectedLocation != 0 ? Colors.black87 : Colors.grey,
                   ),
                 ),
               ),
@@ -162,7 +153,6 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
     );
   }
 
-  // Widget reutilizable para las tarjetas
   Widget _buildLocationCard({required int id, required String text}) {
     bool isSelected = selectedLocation == id;
 
@@ -194,7 +184,7 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 14,
               color: Colors.black87,
@@ -206,7 +196,6 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
     );
   }
 
-  // Widget reutilizable para los puntitos
   Widget _buildDot({required bool isActive}) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
