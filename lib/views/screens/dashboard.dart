@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'reservas.dart'; // Para volver a la pantalla principal
 import 'networkoverview.dart'; // Para ir a los anuncios
+import 'add_ad_screen.dart';
 
 class ProfileDashboardScreen extends StatefulWidget {
   const ProfileDashboardScreen({super.key});
@@ -11,7 +12,7 @@ class ProfileDashboardScreen extends StatefulWidget {
 
 class _ProfileDashboardScreenState extends State<ProfileDashboardScreen> {
   // El índice seleccionado ahora es 3 (Perfil) para que coincida con el navbar global
-  int _selectedIndex = 3; 
+  final int _selectedIndex = 3; 
 
   // --- PALETA DE COLORES CLARA ---
   final Color bgColor = const Color(0xFFF9FAFB); 
@@ -70,7 +71,12 @@ class _ProfileDashboardScreenState extends State<ProfileDashboardScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AddAdScreen()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2D2D2D), 
                       foregroundColor: Colors.white,
@@ -99,7 +105,7 @@ class _ProfileDashboardScreenState extends State<ProfileDashboardScreen> {
                 color: surfaceColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: borderColor),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +188,7 @@ class _ProfileDashboardScreenState extends State<ProfileDashboardScreen> {
         color: surfaceColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,7 +222,7 @@ class _ProfileDashboardScreenState extends State<ProfileDashboardScreen> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          FractionallySizedBox(heightFactor: h1, child: Container(decoration: BoxDecoration(color: accentColor.withOpacity(0.2), borderRadius: BorderRadius.circular(6)))),
+          FractionallySizedBox(heightFactor: h1, child: Container(decoration: BoxDecoration(color: accentColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(6)))),
           FractionallySizedBox(heightFactor: h2, child: Container(decoration: BoxDecoration(color: accentColor, borderRadius: BorderRadius.circular(6)))),
         ],
       ),

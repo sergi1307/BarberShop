@@ -63,7 +63,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 20, spreadRadius: 2, offset: const Offset(0, 8))],
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 20, spreadRadius: 2, offset: const Offset(0, 8))],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +145,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color: Colors.black.withOpacity(0.65), // Overlay oscuro
+                    color: Colors.black.withValues(alpha: 0.65), // Overlay oscuro
                   ),
                   padding: const EdgeInsets.all(16),
                   child: Row(

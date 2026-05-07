@@ -94,7 +94,7 @@ class ReservationsScreen extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                 ),
                 padding: const EdgeInsets.all(16),
                 child: Row(
@@ -187,11 +187,19 @@ class ReservationsScreen extends StatelessWidget {
             // LÓGICA DE NAVEGACIÓN
             onTap: (index) {
               if (index == 2) { // El índice 2 es el de los anuncios (Ads)
-                // Uso pushReplacement para que no se acumulen pantallas al navegar por el menú
                 Navigator.pushReplacement(
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation1, animation2) => const LuxeCutsScreen(),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                );
+              } else if (index == 3) { // El índice 3 es el de Perfil
+                Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) => const ProfileDashboardScreen(),
                     transitionDuration: Duration.zero,
                     reverseTransitionDuration: Duration.zero,
                   ),

@@ -151,7 +151,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: isSelected ? Colors.black : Colors.grey.shade300, width: isSelected ? 2 : 1),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 4, offset: const Offset(0, 2))],
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 4, offset: const Offset(0, 2))],
                 ),
                 child: Center(
                   child: Text(time, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: isSelected ? Colors.black : Colors.black54)),

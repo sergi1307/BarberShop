@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'networkoverview.dart';
+import 'dashboard.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -13,7 +14,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const ReservasScreen(),
-    const Scaffold(body: Center(child: Text('Perfil'))), // Placeholder 1
+    const ProfileDashboardScreen(), // Perfil
     const Scaffold(body: Center(child: Text('Tienda/Contacto'))), // Placeholder 2
     const Scaffold(body: Center(child: Text('Notificaciones'))), // Placeholder 3
     const LuxeCutsScreen(), // Publicidad
