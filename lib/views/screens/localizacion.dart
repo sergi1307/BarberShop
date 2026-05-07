@@ -161,6 +161,19 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
         setState(() {
           selectedLocation = id;
         });
+        
+        String direccionSeleccionada = id == 1 
+            ? "C/ Escultor Toran 2 Pta 4" 
+            : "Calle del Niu, 40";
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SelectProfessionalScreen(
+              location: direccionSeleccionada,
+            ),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),

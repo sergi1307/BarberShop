@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // Asegúrate de que este nombre coincida con tu archivo de reservas
-import 'reservas.dart'; 
-// ¡NUEVO! Importamos la vista del perfil
+import 'reservas.dart';
+import 'add_ad_screen.dart'; 
 import 'dashboard.dart'; 
 
 class LuxeCutsScreen extends StatelessWidget {
@@ -84,39 +84,73 @@ class LuxeCutsScreen extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddAdScreen()),
+            );
+          },
           backgroundColor: Colors.black,
           child: const Icon(Icons.add, color: Colors.white),
         ),
-        
-        // --- NAVBAR ACTUALIZADO ---
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF3182CE), // Usamos el azul corporativo de la app
-          unselectedItemColor: Colors.grey[400],
-          currentIndex: 2, // Mantenemos seleccionado el icono de Ads (índice 2)
-          onTap: (index) {
-            // Si pulsa Reservas (0), va a Reservas
-            if (index == 0) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const ReservationsScreen()),
-              );
-            } 
-            // Si pulsa Perfil (3), va al Dashboard
-            else if (index == 3) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfileDashboardScreen()),
-              );
-            }
-          },
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Reservas'),
-            BottomNavigationBarItem(icon: Icon(Icons.location_on_outlined), label: 'Locales'),
-            BottomNavigationBarItem(icon: Icon(Icons.campaign), label: 'Ads'),
-            BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
-          ],
+        bottomNavigationBar: Theme(
+          data: Theme.of(context).copyWith(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(top: BorderSide(color: Colors.grey.shade200, width: 0.5)),
+            ),
+            child: BottomNavigationBar(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: const Color(0xFF3182CE),
+              unselectedItemColor: Colors.grey[400],
+              selectedFontSize: 11,
+              unselectedFontSize: 11,
+              selectedIconTheme: const IconThemeData(size: 26),
+              unselectedIconTheme: const IconThemeData(size: 24),
+              currentIndex: 2, // Mantenemos seleccionado el icono de Ads (índice 2)
+              onTap: (index) {
+                // Si el usuario pulsa el índice 0 (Reservas), volvemos atrás
+                if (index == 0) {
+                  Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) => const ReservationsScreen(),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  );
+                }
+              },
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.calendar_month_outlined)),
+                  activeIcon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.calendar_month)),
+                  label: 'Reservas'
+                ),
+                BottomNavigationBarItem(
+                  icon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.location_on_outlined)),
+                  activeIcon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.location_on)),
+                  label: 'Locales'
+                ),
+                BottomNavigationBarItem(
+                  icon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.campaign_outlined)),
+                  activeIcon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.campaign)),
+                  label: 'Ads'
+                ),
+                BottomNavigationBarItem(
+                  icon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.person_outline)),
+                  activeIcon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.person)),
+                  label: 'Perfil'
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
