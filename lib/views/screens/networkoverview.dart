@@ -115,12 +115,20 @@ class LuxeCutsScreen extends StatelessWidget {
               unselectedIconTheme: const IconThemeData(size: 24),
               currentIndex: 2, // Mantenemos seleccionado el icono de Ads (índice 2)
               onTap: (index) {
-                // Si el usuario pulsa el índice 0 (Reservas), volvemos atrás
                 if (index == 0) {
                   Navigator.pushReplacement(
                     context,
                     PageRouteBuilder(
                       pageBuilder: (context, animation1, animation2) => const ReservationsScreen(),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  );
+                } else if (index == 3) {
+                  Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) => const ProfileDashboardScreen(),
                       transitionDuration: Duration.zero,
                       reverseTransitionDuration: Duration.zero,
                     ),

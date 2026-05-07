@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:image_picker/image_picker.dart';
 import 'package:crop_image/crop_image.dart';
@@ -18,7 +17,7 @@ class _AddAdScreenState extends State<AddAdScreen> {
   double _pujaAmount = 0.0;
   String _selectedObjetivo = 'Visitas a página web';
   
-  List<Uint8List> _bannerImagesBytes = [];
+  final List<Uint8List> _bannerImagesBytes = [];
   String _adTitle = 'Tu Título Aquí';
   String _adDescription = 'Tu descripción aparecerá aquí...';
   String _adCompanyName = 'Tu Empresa';
@@ -701,7 +700,8 @@ class _AddAdScreenState extends State<AddAdScreen> {
                   _bannerImagesBytes.add(data.buffer.asUint8List());
                 });
               }
-              if (mounted) Navigator.pop(context);
+              if (!context.mounted) return;
+              Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.black87, foregroundColor: Colors.white),
             child: const Text('Recortar'),
