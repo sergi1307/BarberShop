@@ -38,6 +38,25 @@ class _SelectServicesScreenState extends State<SelectServicesScreen> {
         selectedServices.add(id);
       }
     });
+
+    List<String> nombres = [];
+    if (selectedServices.contains(1)) nombres.add("Corte de pelo");
+    if (selectedServices.contains(2)) nombres.add("Rapado");
+    if (selectedServices.contains(3)) nombres.add("Corte fade");
+    if (selectedServices.contains(4)) nombres.add("Arreglo barba");
+
+    String serviciosFinales = nombres.join(" + ");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SelectDateScreen(
+          location: widget.location,
+          professional: widget.professional,
+          services: serviciosFinales,
+        ),
+      ),
+    );
   }
 
   @override

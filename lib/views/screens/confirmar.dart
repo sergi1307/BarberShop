@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'reservas.dart';
 
 class SummaryScreen extends StatefulWidget {
   final String location;
@@ -109,7 +110,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         onPressed: () {
                           // Acción de confirmar: Vuelve a la primera pantalla
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('¡Reserva confirmada con éxito!'), backgroundColor: Colors.green));
-                          Navigator.of(context).popUntil((route) => route.isFirst);
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ReservationsScreen()),
+                            (Route<dynamic> route) => false,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2D2D2D), // Gris oscuro

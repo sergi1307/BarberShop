@@ -185,6 +185,20 @@ class _SelectProfessionalScreenState extends State<SelectProfessionalScreen> {
         setState(() {
           selectedProfessional = id;
         });
+
+        String nombreBarbero = id == 1
+            ? "Jesús Huertas Mancebo"
+            : "Ramón Díaz";
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SelectServicesScreen(
+              location: widget.location,
+              professional: nombreBarbero,
+            ),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
