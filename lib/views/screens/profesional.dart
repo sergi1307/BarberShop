@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'servicios.dart';
 
 class SelectProfessionalScreen extends StatefulWidget {
-  const SelectProfessionalScreen({super.key});
+  final String location; // <--- Añadimos esta línea
+
+  // Actualizamos el constructor para que pida la location obligatoriamente
+  const SelectProfessionalScreen({super.key, required this.location});
 
   @override
-  State<SelectProfessionalScreen> createState() => _SelectProfessionalScreenState();
+  State<SelectProfessionalScreen> createState() =>
+      _SelectProfessionalScreenState();
 }
 
 class _SelectProfessionalScreenState extends State<SelectProfessionalScreen> {
@@ -20,7 +24,8 @@ class _SelectProfessionalScreenState extends State<SelectProfessionalScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A1A1A),
         elevation: 0,
-        automaticallyImplyLeading: false, // Quitamos la flecha de volver por defecto
+        automaticallyImplyLeading:
+            false, // Quitamos la flecha de volver por defecto
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
@@ -30,7 +35,11 @@ class _SelectProfessionalScreenState extends State<SelectProfessionalScreen> {
         ),
         title: const Text(
           'Beard Style Barbershop',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
         ),
       ),
       body: Column(
@@ -51,11 +60,11 @@ class _SelectProfessionalScreenState extends State<SelectProfessionalScreen> {
             'Selecciona la/el profesional',
             style: TextStyle(
               fontSize: 14,
-              color: Color(0xFF4A8E9F), 
+              color: Color(0xFF4A8E9F),
               fontWeight: FontWeight.w600,
             ),
           ),
-          
+
           const Spacer(),
 
           // --- TARJETAS DE PROFESIONALES ---
@@ -67,7 +76,8 @@ class _SelectProfessionalScreenState extends State<SelectProfessionalScreen> {
                   child: _buildProfessionalCard(
                     id: 1,
                     name: 'Jesús Huertas\nMancebo',
-                    imageUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80', // Foto de prueba
+                    imageUrl:
+                        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80', // Foto de prueba
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -75,17 +85,18 @@ class _SelectProfessionalScreenState extends State<SelectProfessionalScreen> {
                   child: _buildProfessionalCard(
                     id: 2,
                     name: 'Ramón\nDíaz',
-                    imageUrl: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=150&q=80', // Foto de prueba
+                    imageUrl:
+                        'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=150&q=80', // Foto de prueba
                   ),
                 ),
               ],
             ),
           ),
-          
+
           const Spacer(flex: 2),
         ],
       ),
-      
+
       // --- BARRA INFERIOR DE NAVEGACIÓN ---
       // --- BARRA INFERIOR DE NAVEGACIÓN ---
       bottomNavigationBar: SafeArea(
@@ -99,38 +110,58 @@ class _SelectProfessionalScreenState extends State<SelectProfessionalScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap: () => Navigator.pop(context), 
+                onTap: () => Navigator.pop(context),
                 child: const Text(
                   'VOLVER',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
-              
+
               // Indicadores de progreso (Paso 2 activo)
               Row(
                 children: [
                   _buildDot(isActive: false),
-                  _buildDot(isActive: true), 
+                  _buildDot(isActive: true),
                   _buildDot(isActive: false),
                   _buildDot(isActive: false),
                   _buildDot(isActive: false),
                 ],
               ),
-              
+
               GestureDetector(
-                onTap: selectedProfessional != 0 ? () {
-                  // --- AQUÍ ESTÁ LA MAGIA DE LA NAVEGACIÓN ---
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SelectServicesScreen()),
-                  );
-                } : null,
+                // En el GestureDetector del botón SIGUIENTE:
+                onTap: selectedProfessional != 0
+                    ? () {
+                        // Convertimos el ID en el nombre real
+                        String nombreBarbero = selectedProfessional == 1
+                            ? "Jesús Huertas Mancebo"
+                            : "Ramón Díaz";
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SelectServicesScreen(
+                              location: widget
+                                  .location, // Pasamos la dirección que venía de la pantalla anterior
+                              professional:
+                                  nombreBarbero, // Pasamos el barbero seleccionado
+                            ),
+                          ),
+                        );
+                      }
+                    : null,
                 child: Text(
                   'SIGUIENTE',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold, 
-                    fontSize: 14, 
-                    color: selectedProfessional != 0 ? Colors.black87 : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: selectedProfessional != 0
+                        ? Colors.black87
+                        : Colors.grey,
                   ),
                 ),
               ),
@@ -142,9 +173,13 @@ class _SelectProfessionalScreenState extends State<SelectProfessionalScreen> {
   }
 
   // Widget modificado para tener Foto + Nombre
-  Widget _buildProfessionalCard({required int id, required String name, required String imageUrl}) {
+  Widget _buildProfessionalCard({
+    required int id,
+    required String name,
+    required String imageUrl,
+  }) {
     bool isSelected = selectedProfessional == id;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
