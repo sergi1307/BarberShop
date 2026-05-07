@@ -162,27 +162,65 @@ class ReservationsScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF3182CE),
-        unselectedItemColor: Colors.grey[400],
-        currentIndex: 0,
-        // LÓGICA DE NAVEGACIÓN
-        onTap: (index) {
-          if (index == 2) { // El índice 2 es el de los anuncios (Ads)
-            // Uso pushReplacement para que no se acumulen pantallas al navegar por el menú
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const LuxeCutsScreen()),
-            );
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Reservas'),
-          BottomNavigationBarItem(icon: Icon(Icons.location_on_outlined), label: 'Locales'),
-          BottomNavigationBarItem(icon: Icon(Icons.campaign), label: 'Ads'), 
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
-        ],
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(top: BorderSide(color: Colors.grey.shade200, width: 0.5)),
+          ),
+          child: BottomNavigationBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: const Color(0xFF3182CE),
+            unselectedItemColor: Colors.grey[400],
+            selectedFontSize: 11,
+            unselectedFontSize: 11,
+            selectedIconTheme: const IconThemeData(size: 26),
+            unselectedIconTheme: const IconThemeData(size: 24),
+            currentIndex: 0,
+            // LÓGICA DE NAVEGACIÓN
+            onTap: (index) {
+              if (index == 2) { // El índice 2 es el de los anuncios (Ads)
+                // Uso pushReplacement para que no se acumulen pantallas al navegar por el menú
+                Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) => const LuxeCutsScreen(),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                );
+              }
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.calendar_month_outlined)),
+                activeIcon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.calendar_month)),
+                label: 'Reservas'
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.location_on_outlined)),
+                activeIcon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.location_on)),
+                label: 'Locales'
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.campaign_outlined)),
+                activeIcon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.campaign)),
+                label: 'Ads'
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.person_outline)),
+                activeIcon: Padding(padding: EdgeInsets.only(bottom: 4), child: Icon(Icons.person)),
+                label: 'Perfil'
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
