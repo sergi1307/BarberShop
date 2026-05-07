@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 // Importamos la vista de los anuncios para poder navegar a ella
 import 'networkoverview.dart'; 
+// Importamos la nueva vista de selección de dirección
+import 'localizacion.dart';
 
 class ReservationsScreen extends StatelessWidget {
   const ReservationsScreen({super.key});
@@ -140,7 +142,13 @@ class ReservationsScreen extends StatelessWidget {
               width: double.infinity,
               height: 60,
               child: ElevatedButton(
-                onPressed: () {},
+                // --- AQUÍ AÑADIMOS LA NAVEGACIÓN A LA NUEVA PANTALLA ---
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SelectLocationScreen()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1A1A1A),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -162,7 +170,8 @@ class ReservationsScreen extends StatelessWidget {
         // LÓGICA DE NAVEGACIÓN
         onTap: (index) {
           if (index == 2) { // El índice 2 es el de los anuncios (Ads)
-            Navigator.push(
+            // Uso pushReplacement para que no se acumulen pantallas al navegar por el menú
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const LuxeCutsScreen()),
             );
@@ -171,7 +180,6 @@ class ReservationsScreen extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Reservas'),
           BottomNavigationBarItem(icon: Icon(Icons.location_on_outlined), label: 'Locales'),
-          // AÑADIDO: Icono de Ads para ir a la otra vista
           BottomNavigationBarItem(icon: Icon(Icons.campaign), label: 'Ads'), 
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
