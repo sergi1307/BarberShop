@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 // Asegúrate de que este nombre coincida con tu archivo de reservas
 import 'reservas.dart';
-import 'add_ad_screen.dart';
+import 'add_ad_screen.dart'; 
+import 'dashboard.dart'; 
 
 class LuxeCutsScreen extends StatelessWidget {
   const LuxeCutsScreen({super.key});

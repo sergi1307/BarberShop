@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-// Importamos la vista de los anuncios para poder navegar a ella
+// Importamos la vista de los anuncios
 import 'networkoverview.dart'; 
-// Importamos la nueva vista de selección de dirección
+// Importamos la vista de selección de dirección
 import 'localizacion.dart';
+// ¡NUEVO! Importamos el panel de control del perfil
+import 'dashboard.dart'; // <-- Asegúrate de que el nombre del archivo coincida con el que creaste
 
 class ReservationsScreen extends StatelessWidget {
   const ReservationsScreen({super.key});
@@ -142,7 +144,6 @@ class ReservationsScreen extends StatelessWidget {
               width: double.infinity,
               height: 60,
               child: ElevatedButton(
-                // --- AQUÍ AÑADIMOS LA NAVEGACIÓN A LA NUEVA PANTALLA ---
                 onPressed: () {
                   Navigator.push(
                     context,
