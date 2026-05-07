@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-// Importamos la vista de los anuncios para poder navegar a ella
+// Importamos la vista de los anuncios
 import 'networkoverview.dart'; 
-// Importamos la nueva vista de selección de dirección
+// Importamos la vista de selección de dirección
 import 'localizacion.dart';
+// ¡NUEVO! Importamos el panel de control del perfil
+import 'dashboard.dart'; // <-- Asegúrate de que el nombre del archivo coincida con el que creaste
 
 class ReservationsScreen extends StatelessWidget {
   const ReservationsScreen({super.key});
@@ -142,7 +144,6 @@ class ReservationsScreen extends StatelessWidget {
               width: double.infinity,
               height: 60,
               child: ElevatedButton(
-                // --- AQUÍ AÑADIMOS LA NAVEGACIÓN A LA NUEVA PANTALLA ---
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -167,13 +168,18 @@ class ReservationsScreen extends StatelessWidget {
         selectedItemColor: const Color(0xFF3182CE),
         unselectedItemColor: Colors.grey[400],
         currentIndex: 0,
-        // LÓGICA DE NAVEGACIÓN
         onTap: (index) {
-          if (index == 2) { // El índice 2 es el de los anuncios (Ads)
-            // Uso pushReplacement para que no se acumulen pantallas al navegar por el menú
+          if (index == 2) { 
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const LuxeCutsScreen()),
+            );
+          }
+          // --- AQUÍ ESTÁ LA MAGIA DEL PERFIL ---
+          else if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfileDashboardScreen()),
             );
           }
         },

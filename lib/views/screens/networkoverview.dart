@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 // Asegúrate de que este nombre coincida con tu archivo de reservas
 import 'reservas.dart'; 
+// ¡NUEVO! Importamos la vista del perfil
+import 'dashboard.dart'; 
 
 class LuxeCutsScreen extends StatelessWidget {
   const LuxeCutsScreen({super.key});
@@ -86,22 +88,30 @@ class LuxeCutsScreen extends StatelessWidget {
           backgroundColor: Colors.black,
           child: const Icon(Icons.add, color: Colors.white),
         ),
+        
+        // --- NAVBAR ACTUALIZADO ---
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.black,
+          selectedItemColor: const Color(0xFF3182CE), // Usamos el azul corporativo de la app
           unselectedItemColor: Colors.grey[400],
           currentIndex: 2, // Mantenemos seleccionado el icono de Ads (índice 2)
           onTap: (index) {
-            // Si el usuario pulsa el índice 0 (Reservas), volvemos atrás
+            // Si pulsa Reservas (0), va a Reservas
             if (index == 0) {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const ReservationsScreen()),
               );
+            } 
+            // Si pulsa Perfil (3), va al Dashboard
+            else if (index == 3) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileDashboardScreen()),
+              );
             }
           },
           items: const [
-            // Hemos actualizado los iconos para que sean iguales en ambas pantallas
             BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Reservas'),
             BottomNavigationBarItem(icon: Icon(Icons.location_on_outlined), label: 'Locales'),
             BottomNavigationBarItem(icon: Icon(Icons.campaign), label: 'Ads'),
