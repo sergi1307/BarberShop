@@ -408,9 +408,9 @@ class _AddAdScreenState extends State<AddAdScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Datos de Pago', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        const Text('Datos de Facturación y Pago', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         const SizedBox(height: 4),
-        const Text('Configura tu domiciliación SEPA', style: TextStyle(fontSize: 14, color: Colors.grey)),
+        const Text('Configura tus datos fiscales y domiciliación SEPA', style: TextStyle(fontSize: 14, color: Colors.grey)),
         const SizedBox(height: 24),
         Container(
           padding: const EdgeInsets.all(16),
@@ -422,6 +422,46 @@ class _AddAdScreenState extends State<AddAdScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const Text('Datos de Facturación', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
+              const SizedBox(height: 16),
+              _buildTextField(
+                'Razón Social', 
+                'Ej. Mi Empresa S.L. / Juan Pérez',
+                textCapitalization: TextCapitalization.words,
+                validator: (val) {
+                  if (val == null || val.isEmpty) return 'La Razón Social es obligatoria';
+                  if (val.trim().length < 3) return 'Debe tener al menos 3 caracteres';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildTextField(
+                'CIF / DNI / NIE', 
+                'Ej. B12345678 / 12345678A',
+                textCapitalization: TextCapitalization.characters,
+                validator: (val) {
+                  if (val == null || val.isEmpty) return 'El documento es obligatorio';
+                  String cleanDoc = val.replaceAll(RegExp(r'[\s-]'), '').toUpperCase();
+                  if (!RegExp(r'^([0-9]{8}[A-Z]|[A-Z][0-9]{7}[A-Z0-9]|[XYZ][0-9]{7}[A-Z])$').hasMatch(cleanDoc)) {
+                    return 'Formato inválido. Revisa tu DNI, CIF o NIE';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildTextField(
+                'Dirección Fiscal', 
+                'Ej. Calle Mayor 1, 28001 Madrid',
+                textCapitalization: TextCapitalization.sentences,
+                validator: (val) {
+                  if (val == null || val.isEmpty) return 'La dirección fiscal es obligatoria';
+                  if (val.trim().length < 10) return 'Introduce una dirección más detallada';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              const Divider(),
+              const SizedBox(height: 16),
               const Text('Domiciliación Bancaria (SEPA)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
               const SizedBox(height: 16),
               _buildTextField(
