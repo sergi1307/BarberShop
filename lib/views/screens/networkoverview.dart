@@ -17,6 +17,8 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
   // --- VARIABLE MÁGICA: Cambia a false para ocultar el panel de control al usuario normal ---
   bool isAdvertiser = true; 
 
+  String searchQuery = '';
+
   final List<Map<String, dynamic>> adsData = const [
     {
       'name': 'Modern Tech Gadgets',
@@ -193,14 +195,56 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
   // VISTA 1: LISTA DE ANUNCIOS 
   // ======================================================================
   Widget _buildAdsContent() {
+    final filteredAds = adsData.where((ad) {
+      final query = searchQuery.toLowerCase();
+      final name = ad['name'].toString().toLowerCase();
+      final desc = ad['desc'].toString().toLowerCase();
+      final tag = ad['tag'].toString().toLowerCase();
+      return name.contains(query) || desc.contains(query) || tag.contains(query);
+    }).toList();
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('Featured Ads', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87)),
-          const SizedBox(height: 20),
-          Column(children: adsData.map((ad) => _buildFeaturedCard(ad)).toList()),
+          const SizedBox(height: 16),
+          TextField(
+            onChanged: (value) {
+              setState(() {
+                searchQuery = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Buscar anuncios, categorías...',
+              prefixIcon: const Icon(Icons.search, color: Colors.grey),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.black87),
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+          ),
+          const SizedBox(height: 24),
+          filteredAds.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.only(top: 40),
+                  child: Center(
+                    child: Text('No se encontraron anuncios', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                  ),
+                )
+              : Column(children: filteredAds.map((ad) => _buildFeaturedCard(ad)).toList()),
         ],
       ),
     );
