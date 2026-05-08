@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'networkoverview.dart';
+import 'anuncios.dart';
 import 'dashboard.dart';
 
 class MainScreen extends StatefulWidget {

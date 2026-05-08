@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-// Importamos la vista de los anuncios
-import 'networkoverview.dart'; 
-// Importamos la vista de selección de dirección
+import 'anuncios.dart'; 
 import 'localizacion.dart';
-// ¡NUEVO! Importamos el panel de control del perfil
-import 'dashboard.dart'; // <-- Asegúrate de que el nombre del archivo coincida con el que creaste
-
+import 'dashboard.dart'; // <-- Asegúrate de que el nombre coincide con tu archivo del perfil
 import 'dart:async';
 import 'add_ad_screen.dart';
+
+// --- VARIABLE GLOBAL MÁGICA ---
+// Esto permite que otras pantallas (como la de Editar) puedan apagar o encender el anuncio del carrusel
+bool isCampaignActiveGlobal = true; 
 
 class ReservationsScreen extends StatefulWidget {
   const ReservationsScreen({super.key});
@@ -26,7 +26,14 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
     _bannerTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (mounted) {
         setState(() {
-          _currentBanner = (_currentBanner + 1) % 2;
+          // --- LÓGICA DEL CARRUSEL ---
+          if (!isCampaignActiveGlobal) {
+            // Si la campaña está pausada, dejamos fijo el banner de "Anúnciate aquí" (índice 1)
+            _currentBanner = 1;
+          } else {
+            // Si está activa, va alternando entre 0 y 1
+            _currentBanner = (_currentBanner + 1) % 2;
+          }
         });
       }
     });
@@ -108,12 +115,15 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
             ),
           ),
 
-          // Banner dinámico
+          // --- CARRUSEL DINÁMICO ---
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),
-              child: _currentBanner == 0 ? _buildPromoBanner() : _buildAdRequestBanner(),
+              // Solo muestra el promoBanner si es su turno Y la campaña está activa globalmente
+              child: (isCampaignActiveGlobal && _currentBanner == 0) 
+                  ? _buildPromoBanner() 
+                  : _buildAdRequestBanner(),
             ),
           ),
 
@@ -213,6 +223,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
     );
   }
 
+  // --- BANNER ACTUALIZADO AL DE "MASTER'S EDGE" ---
   Widget _buildPromoBanner() {
     return Container(
       key: const ValueKey(0),
@@ -220,7 +231,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         image: const DecorationImage(
-          image: NetworkImage('https://images.unsplash.com/photo-1593702295094-ada74bc1099a?w=500'),
+          image: NetworkImage('https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600'),
           fit: BoxFit.cover,
         ),
       ),
@@ -240,17 +251,18 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.amber.shade700,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Text(
-                    'PROMOCIÓN',
-                    style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+                    'AD',
+                    style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 1),
                   ),
                 ),
+                const SizedBox(height: 4),
                 const Text(
-                  'Aceite Premium: 20% Dto.',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  "Master's Edge Series",
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                 ),
               ],
             ),
@@ -262,7 +274,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                 shape: const StadiumBorder(),
                 padding: const EdgeInsets.symmetric(horizontal: 16),
               ),
-              child: const Text('VER OFERTA', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+              child: const Text('VER MÁS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
