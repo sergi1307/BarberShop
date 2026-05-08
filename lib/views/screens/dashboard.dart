@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'reservas.dart';
-import 'networkoverview.dart';
+import 'anuncios.dart';
 
 class ProfileDashboardScreen extends StatefulWidget {
   const ProfileDashboardScreen({super.key});
