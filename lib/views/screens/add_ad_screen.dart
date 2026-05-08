@@ -18,9 +18,9 @@ class _AddAdScreenState extends State<AddAdScreen> {
   String _selectedObjetivo = 'Visitas a página web';
   
   final List<Uint8List> _bannerImagesBytes = [];
-  String _adTitle = 'Tu Título Aquí';
-  String _adDescription = 'Tu descripción aparecerá aquí...';
-  String _adCompanyName = 'Tu Empresa';
+  String _adTitle = '';
+  String _adDescription = '';
+  String _adCompanyName = '';
 
   final int _totalSteps = 4;
 
@@ -193,7 +193,11 @@ class _AddAdScreenState extends State<AddAdScreen> {
           'Ej. The Executive Grooming',
           textCapitalization: TextCapitalization.words,
           onChanged: (val) => setState(() => _adCompanyName = val.isNotEmpty ? val : 'Tu Empresa'),
-          validator: (val) => (val == null || val.isEmpty) ? 'El nombre es obligatorio' : null,
+          validator: (val) {
+            if (val == null || val.isEmpty) return 'El nombre es obligatorio';
+            if (val.length < 3) return 'El nombre debe tener al menos 3 caracteres';
+            return null;
+          },
         ),
         const SizedBox(height: 16),
         _buildDropdown(
@@ -213,7 +217,17 @@ class _AddAdScreenState extends State<AddAdScreen> {
           destinoLabel, 
           destinoHint, 
           isNumber: _selectedObjetivo == 'Llamadas',
-          validator: (val) => (val == null || val.isEmpty) ? 'Este campo es obligatorio' : null,
+          validator: (val) {
+            if (val == null || val.isEmpty) return 'Este campo es obligatorio';
+            if (_selectedObjetivo == 'Visitas a página web' || _selectedObjetivo == 'Descargas de app') {
+              final urlPattern = r"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$";
+              if (!RegExp(urlPattern).hasMatch(val)) return 'Introduce una URL válida (ej. https://...)';
+            } else if (_selectedObjetivo == 'Llamadas') {
+              final phonePattern = r"^[0-9\-\+\s]{9,15}$";
+              if (!RegExp(phonePattern).hasMatch(val)) return 'Introduce un teléfono válido (mín. 9 dígitos)';
+            }
+            return null;
+          },
         ),
       ],
     );
@@ -228,37 +242,45 @@ class _AddAdScreenState extends State<AddAdScreen> {
         const Text('Textos e imágenes para el anuncio', style: TextStyle(fontSize: 14, color: Colors.grey)),
         const SizedBox(height: 24),
         _buildTextField(
-          'Diferentes Títulos', 
-          'Ej. Título 1, Título 2... (Separados por coma)', 
+          'Título', 
+          'Ej. Gran apertura en el centro', 
           maxLines: 2,
           textCapitalization: TextCapitalization.sentences,
           inputFormatters: [CommaCapitalizationFormatter()],
           onChanged: (val) {
             setState(() {
-              _adTitle = val.split(',').first.trim();
-              if (_adTitle.isEmpty) _adTitle = 'Tu Título Aquí';
+              _adTitle = val.trim();
             });
           },
-          validator: (val) => (val == null || val.isEmpty) ? 'Añade al menos un título' : null,
+          validator: (val) {
+            if (val == null || val.isEmpty) return 'El título es obligatorio';
+            if (val.length < 10) return 'El título debe tener al menos 10 caracteres';
+            if (val.length > 50) return 'El título no puede superar los 50 caracteres';
+            return null;
+          },
         ),
         const SizedBox(height: 16),
         _buildTextField(
-          'Diferentes Descripciones', 
-          'Ej. Desc 1, Desc 2... (Separados por coma)', 
+          'Descripción', 
+          'Ej. Ven a conocernos y disfruta de un corte profesional', 
           maxLines: 3,
           textCapitalization: TextCapitalization.sentences,
           inputFormatters: [CommaCapitalizationFormatter()],
           onChanged: (val) {
             setState(() {
-              _adDescription = val.split(',').first.trim();
-              if (_adDescription.isEmpty) _adDescription = 'Tu descripción aparecerá aquí...';
+              _adDescription = val.trim();
             });
           },
-          validator: (val) => (val == null || val.isEmpty) ? 'Añade al menos una descripción' : null,
+          validator: (val) {
+            if (val == null || val.isEmpty) return 'La descripción es obligatoria';
+            if (val.length < 20) return 'La descripción debe tener al menos 20 caracteres';
+            if (val.length > 150) return 'La descripción no puede superar los 150 caracteres';
+            return null;
+          },
         ),
         const SizedBox(height: 16),
         _buildFilePicker(
-          'Subir Imágenes y Logos',
+          'Subir Imagen o Logo',
           isImagePicker: true,
           onTap: () => _showPickerOptions(),
         ),
@@ -336,7 +358,13 @@ class _AddAdScreenState extends State<AddAdScreen> {
                             _pujaAmount = double.tryParse(val.replaceAll(',', '.')) ?? 0.0;
                           });
                         },
-                        validator: (val) => (val == null || val.isEmpty) ? 'Indica una puja' : null,
+                        validator: (val) {
+                          if (val == null || val.isEmpty) return 'Indica una puja';
+                          final amount = double.tryParse(val.replaceAll(',', '.'));
+                          if (amount == null || amount <= 0) return 'Introduce un importe válido';
+                          if (amount < 0.10) return 'La puja mínima es de 0.10€';
+                          return null;
+                        },
                       ),
                       if (_pujaAmount > 0)
                         Padding(
@@ -365,7 +393,12 @@ class _AddAdScreenState extends State<AddAdScreen> {
           'Presupuesto Mensual (€)', 
           'Ej. 500', 
           isNumber: true,
-          validator: (val) => (val == null || val.isEmpty) ? 'El presupuesto es obligatorio' : null,
+          validator: (val) {
+            if (val == null || val.isEmpty) return 'El presupuesto es obligatorio';
+            final amount = double.tryParse(val.replaceAll(',', '.'));
+            if (amount == null || amount < 10) return 'El presupuesto mínimo es de 10€';
+            return null;
+          },
         ),
       ],
     );
@@ -395,7 +428,12 @@ class _AddAdScreenState extends State<AddAdScreen> {
                 'Titular de la cuenta', 
                 'Ej. Juan Pérez',
                 textCapitalization: TextCapitalization.words,
-                validator: (val) => (val == null || val.isEmpty) ? 'El titular es obligatorio' : null,
+                validator: (val) {
+                  if (val == null || val.isEmpty) return 'El titular es obligatorio';
+                  if (!val.trim().contains(' ')) return 'Introduce nombre y apellidos';
+                  if (val.length < 5) return 'Nombre demasiado corto';
+                  return null;
+                },
               ),
               const SizedBox(height: 12),
               _buildTextField(
@@ -644,17 +682,17 @@ class _AddAdScreenState extends State<AddAdScreen> {
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
 
-    if (source == ImageSource.gallery) {
-      final pickedFiles = await picker.pickMultiImage();
-      if (pickedFiles.isNotEmpty) {
-        for (var file in pickedFiles) {
-          final bytes = await file.readAsBytes();
-          if (mounted) {
-            await _showCropDialog(bytes);
-          }
-        }
-      }
-    } else {
+    // if (source == ImageSource.gallery) {
+    //   final pickedFiles = await picker.pickMultiImage();
+    //   if (pickedFiles.isNotEmpty) {
+    //     for (var file in pickedFiles) {
+    //       final bytes = await file.readAsBytes();
+    //       if (mounted) {
+    //         await _showCropDialog(bytes);
+    //       }
+    //     }
+    //   }
+    // } else {
       final pickedFile = await picker.pickImage(source: source);
       if (pickedFile != null) {
         final bytes = await pickedFile.readAsBytes();
@@ -662,7 +700,7 @@ class _AddAdScreenState extends State<AddAdScreen> {
           await _showCropDialog(bytes);
         }
       }
-    }
+    // }
   }
 
   Future<void> _showCropDialog(Uint8List imageBytes) async {
@@ -697,6 +735,7 @@ class _AddAdScreenState extends State<AddAdScreen> {
               final data = await bitmap.toByteData(format: ui.ImageByteFormat.png);
               if (data != null) {
                 setState(() {
+                  _bannerImagesBytes.clear(); // Solo una imagen de momento
                   _bannerImagesBytes.add(data.buffer.asUint8List());
                 });
               }
@@ -791,7 +830,7 @@ class _BannerPreviewWidgetState extends State<BannerPreviewWidget> {
                             const SizedBox(width: 8),
                             Flexible(
                               child: Text(
-                                widget.companyName,
+                                widget.companyName.isEmpty ? 'Tu Empresa' : widget.companyName,
                                 style: TextStyle(color: currentImage != null ? Colors.white70 : Colors.black54, fontWeight: FontWeight.w600, fontSize: 10),
                                 maxLines: 1, overflow: TextOverflow.ellipsis,
                                 textAlign: _textAlign,
@@ -801,14 +840,14 @@ class _BannerPreviewWidgetState extends State<BannerPreviewWidget> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          widget.title,
+                          widget.title.isEmpty ? 'Tu Título Aquí' : widget.title,
                           style: TextStyle(color: currentImage != null ? Colors.white : Colors.black87, fontWeight: FontWeight.bold, fontSize: 13),
                           maxLines: 1, overflow: TextOverflow.ellipsis,
                           textAlign: _textAlign,
                         ),
                         const SizedBox(height: 0),
                         Text(
-                          widget.description,
+                          widget.description.isEmpty ? 'Tu descripción aparecerá aquí...' : widget.description,
                           maxLines: 1, overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: currentImage != null ? Colors.white70 : Colors.grey.shade700, fontSize: 10),
                           textAlign: _textAlign,
