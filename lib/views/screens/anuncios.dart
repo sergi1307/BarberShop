@@ -3,6 +3,7 @@ import 'reservas.dart';
 import 'add_ad_screen.dart';
 import 'dashboard.dart';
 import 'editaranuncio.dart'; 
+import '../widgets/ad_banner.dart';
 
 class LuxeCutsScreen extends StatefulWidget {
   const LuxeCutsScreen({super.key});
@@ -153,40 +154,6 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
     );
   }
 
-  Widget _buildFeaturedCard(Map<String, dynamic> ad) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 24),
-      elevation: 2,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.network(ad['image'], height: 180, width: double.infinity, fit: BoxFit.cover),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(ad['tag'], style: const TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
-                    Icon(Icons.circle, size: 10, color: ad['active'] ? Colors.green : Colors.red),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(ad['name'], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 6),
-                Text(ad['desc'], style: TextStyle(color: Colors.grey[600], fontSize: 13, height: 1.4), maxLines: 2, overflow: TextOverflow.ellipsis),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildDashboardContent() {
     // Llamamos a la función para tener las etiquetas de la semana actualizadas al día de hoy
