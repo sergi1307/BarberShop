@@ -548,6 +548,35 @@ class _AddAdScreenState extends State<AddAdScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _buildTextField(
+                      'Provincia',
+                      'Ej. Madrid',
+                      textCapitalization: TextCapitalization.words,
+                      validator: (val) {
+                        if (val == null || val.isEmpty) return 'La provincia es obligatoria';
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildTextField(
+                      'País',
+                      'Ej. España',
+                      textCapitalization: TextCapitalization.words,
+                      validator: (val) {
+                        if (val == null || val.isEmpty) return 'El país es obligatorio';
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
