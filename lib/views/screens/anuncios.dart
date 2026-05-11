@@ -15,6 +15,10 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
   bool isShowingDashboard = false;
   bool isAdvertiser = true;
 
+  // --- BUSCADOR ---
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
   // --- VARIABLES DE ESTADO REALES ---
   bool _isCampaignDeleted = false; 
   String _tituloCampana = "Master's Edge Series"; 
@@ -45,6 +49,22 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
       'active': false,
     },
   ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Map<String, dynamic>> get _filteredAds {
+    if (_searchQuery.isEmpty) return adsData;
+    final query = _searchQuery.toLowerCase();
+    return adsData.where((ad) {
+      return (ad['name'] as String).toLowerCase().contains(query) ||
+             (ad['desc'] as String).toLowerCase().contains(query) ||
+             (ad['tag'] as String).toLowerCase().contains(query);
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,18 +146,71 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
     );
   }
 
-  // --- VISTA 1: LISTA DE ANUNCIOS (Recuperada al 100%) ---
+  // --- VISTA 1: LISTA DE ANUNCIOS ---
   Widget _buildAdsContent() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Featured Ads', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87)),
-          const SizedBox(height: 20),
-          Column(children: adsData.map((ad) => _buildFeaturedCard(ad)).toList()),
-        ],
-      ),
+    final filtered = _filteredAds;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Barra de búsqueda
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          child: TextField(
+            controller: _searchController,
+            onChanged: (value) => setState(() => _searchQuery = value),
+            decoration: InputDecoration(
+              hintText: 'Buscar anuncios...',
+              hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+              prefixIcon: const Icon(Icons.search, color: Colors.black54),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.close, color: Colors.black54, size: 18),
+                      onPressed: () => setState(() {
+                        _searchController.clear();
+                        _searchQuery = '';
+                      }),
+                    )
+                  : null,
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.symmetric(vertical: 14),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: Colors.grey.shade200),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: Colors.black, width: 1.5),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: filtered.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.search_off, size: 56, color: Colors.grey[300]),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Sin resultados para "$_searchQuery"',
+                        style: TextStyle(color: Colors.grey[500], fontSize: 14),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                  children: [
+                    const Text('Featured Ads', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87)),
+                    const SizedBox(height: 20),
+                    ...filtered.map((ad) => _buildFeaturedCard(ad)),
+                  ],
+                ),
+        ),
+      ],
     );
   }
 
