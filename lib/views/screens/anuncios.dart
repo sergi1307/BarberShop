@@ -206,7 +206,7 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
           const SizedBox(height: 30),
           
           Text(
-            _searchQuery.isEmpty ? 'Featured Ads' : 'Resultados para "$_searchQuery"',
+            _searchQuery.isEmpty ? 'Featured Ads' : 'Resultados para "${_searchQuery}"',
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
           ),
           const SizedBox(height: 20),
@@ -237,16 +237,13 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
   }
 
   Widget _buildFeaturedCard(Map<String, dynamic> ad) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 24.0),
-      child: BannerAdWidget(
-        id: ad['name'] ?? '',
-        name: ad['name'] ?? '',
-        desc: ad['desc'] ?? '',
-        image: ad['image'] ?? '',
-        tag: ad['tag'] ?? '',
-        isActive: ad['active'] ?? true,
-      ),
+    return BannerAdWidget(
+      id: ad['name'] ?? '',
+      name: ad['name'] ?? '',
+      desc: ad['desc'] ?? '',
+      image: ad['image'] ?? '',
+      tag: ad['tag'] ?? '',
+      isActive: ad['active'] ?? true,
     );
   }
 
@@ -338,7 +335,6 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
     );
   }
 
-  // --- WIDGET ACTUALIZADO PARA USAR EL DISEÑO DE TU COMPAÑERO ---
   Widget _buildCampaignCard(String title, String type, String ctr, String cpc, String roas) {
     if (_isCampaignDeleted) return const SizedBox.shrink(); 
 
@@ -365,49 +361,42 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
           });
         }
       },
-      child: Column(
-        children: [
-          // 1. La tarjeta estética que hizo tu compañero
-          BannerAdWidget(
-            id: 'dashboard_campaign',
-            name: title,
-            desc: "Promoción exclusiva para clientes de Beard Style.", // Descripción genérica para el dashboard
-            image: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600',
-            tag: 'CAMPAIGN',
-            isActive: _isCampaignActive,
-          ),
-          
-          // 2. Las métricas pegadas justo debajo para el Dashboard
-          Transform.translate(
-            offset: const Offset(0, -10), // Subimos un poco el contenedor para que parezca pegado
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10), // Lo hacemos un poco más estrecho para dar efecto de "sombra"
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
-                border: Border.all(color: const Color(0xFFF3F4F6)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  )
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Container(
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFF3F4F6)), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(height: 120, decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: const BorderRadius.vertical(top: Radius.circular(15)), image: const DecorationImage(image: NetworkImage('https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600'), fit: BoxFit.cover))),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildAdStat('CTR', ctr),
-                  Container(height: 30, width: 1, color: Colors.grey.shade300), // Divisor visual
-                  _buildAdStat('CPC', cpc),
-                  Container(height: 30, width: 1, color: Colors.grey.shade300), // Divisor visual
-                  _buildAdStat('ROAS', roas),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(child: Text(title, style: const TextStyle(color: Color(0xFF111827), fontSize: 16, fontWeight: FontWeight.w800), overflow: TextOverflow.ellipsis)),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(color: _isCampaignActive ? const Color(0xFFECFDF5) : Colors.grey.shade200, borderRadius: BorderRadius.circular(6)),
+                        child: Text(_isCampaignActive ? 'ACTIVO' : 'PAUSADO', style: TextStyle(color: _isCampaignActive ? const Color(0xFF10B981) : Colors.grey.shade600, fontSize: 10, fontWeight: FontWeight.w800)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildAdStat('CTR', ctr),
+                      _buildAdStat('CPC', cpc),
+                      _buildAdStat('ROAS', roas),
+                    ],
+                  ),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
