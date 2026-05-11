@@ -21,6 +21,10 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
   String _tituloCampana = "Master's Edge Series"; 
   String _cpcCampana = "\$1.42"; 
   bool _isCampaignActive = true; 
+  
+  // --- SEARCH CONTROLLER ---
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = "";
 
   // --- LISTA DE ANUNCIOS ---
   final List<Map<String, dynamic>> adsData = const [
@@ -60,6 +64,12 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
       labels.add(weekDays[date.weekday - 1]);
     }
     return labels;
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -141,19 +151,101 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
   }
 
   Widget _buildAdsContent() {
+    final filteredAds = adsData.where((ad) {
+      final name = (ad['name'] ?? '').toString().toLowerCase();
+      final desc = (ad['desc'] ?? '').toString().toLowerCase();
+      final query = _searchQuery.toLowerCase();
+      return name.contains(query) || desc.contains(query);
+    }).toList();
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Featured Ads', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87)),
+          // Barra de Búsqueda Premium
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Buscar anuncios...',
+                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                prefixIcon: const Icon(Icons.search, color: Colors.black54),
+                suffixIcon: _searchQuery.isNotEmpty 
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.black54, size: 20),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          _searchQuery = "";
+                        });
+                      },
+                    )
+                  : null,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          
+          Text(
+            _searchQuery.isEmpty ? 'Featured Ads' : 'Resultados para "${_searchQuery}"',
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+          ),
           const SizedBox(height: 20),
-          Column(children: adsData.map((ad) => _buildFeaturedCard(ad)).toList()),
+          
+          if (filteredAds.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: Column(
+                  children: [
+                    Icon(Icons.search_off, size: 64, color: Colors.grey[300]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No se encontraron anuncios',
+                      style: TextStyle(color: Colors.grey[500], fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            Column(
+              children: filteredAds.map<Widget>((ad) => _buildFeaturedCard(ad)).toList(),
+            ),
         ],
       ),
     );
   }
 
+  Widget _buildFeaturedCard(Map<String, dynamic> ad) {
+    return BannerAdWidget(
+      id: ad['name'] ?? '',
+      name: ad['name'] ?? '',
+      desc: ad['desc'] ?? '',
+      image: ad['image'] ?? '',
+      tag: ad['tag'] ?? '',
+      isActive: ad['active'] ?? true,
+    );
+  }
 
   Widget _buildDashboardContent() {
     // Llamamos a la función para tener las etiquetas de la semana actualizadas al día de hoy
