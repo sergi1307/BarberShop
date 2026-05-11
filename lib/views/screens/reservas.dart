@@ -4,6 +4,7 @@ import 'localizacion.dart';
 import 'dashboard.dart'; // <-- Asegúrate de que el nombre coincide con tu archivo del perfil
 import 'dart:async';
 import 'add_ad_screen.dart';
+import '../widgets/ad_banner.dart';
 
 // --- VARIABLE GLOBAL MÁGICA ---
 // Esto permite que otras pantallas (como la de Editar) puedan apagar o encender el anuncio del carrusel
@@ -17,8 +18,33 @@ class ReservationsScreen extends StatefulWidget {
 }
 
 class _ReservationsScreenState extends State<ReservationsScreen> {
-  int _currentBanner = 0;
+  int _currentAdIndex = 0;
   late Timer _bannerTimer;
+
+  final List<Map<String, dynamic>> _ads = [
+    {
+      'id': '101',
+      'name': "Master's Edge Series",
+      'desc': 'The ultimate precision tools for professional barbers.',
+      'image': 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600',
+      'tag': 'PRO TOOLS',
+    },
+    {
+      'id': '102',
+      'name': 'Urban Style Pomade',
+      'desc': 'Strong hold, natural shine. The perfect finish for every cut.',
+      'image': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80',
+      'tag': 'STYLE',
+    },
+    {
+      'id': 'PROMO',
+      'name': '¿Quieres anunciarte aquí?',
+      'desc': 'Llega a miles de clientes locales y haz crecer tu negocio.',
+      'image': 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?q=80&w=800',
+      'tag': 'PROMOTE',
+      'isPromo': true,
+    },
+  ];
 
   @override
   void initState() {
@@ -26,14 +52,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
     _bannerTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (mounted) {
         setState(() {
-          // --- LÓGICA DEL CARRUSEL ---
-          if (!isCampaignActiveGlobal) {
-            // Si la campaña está pausada, dejamos fijo el banner de "Anúnciate aquí" (índice 1)
-            _currentBanner = 1;
-          } else {
-            // Si está activa, va alternando entre 0 y 1
-            _currentBanner = (_currentBanner + 1) % 2;
-          }
+          _currentAdIndex = (_currentAdIndex + 1) % _ads.length;
         });
       }
     });
@@ -120,10 +139,19 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),
-              // Solo muestra el promoBanner si es su turno Y la campaña está activa globalmente
-              child: (isCampaignActiveGlobal && _currentBanner == 0) 
-                  ? _buildPromoBanner() 
-                  : _buildAdRequestBanner(),
+              child: BannerAdWidget(
+                key: ValueKey(_currentAdIndex),
+                id: _ads[_currentAdIndex]['id'],
+                name: _ads[_currentAdIndex]['name'],
+                desc: _ads[_currentAdIndex]['desc'],
+                image: _ads[_currentAdIndex]['image'],
+                tag: _ads[_currentAdIndex]['tag'],
+                onTap: () {
+                  if (_ads[_currentAdIndex]['isPromo'] == true) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAdScreen()));
+                  }
+                },
+              ),
             ),
           ),
 
@@ -223,118 +251,4 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
     );
   }
 
-  // --- BANNER ACTUALIZADO AL DE "MASTER'S EDGE" ---
-  Widget _buildPromoBanner() {
-    return Container(
-      key: const ValueKey(0),
-      height: 90,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        image: const DecorationImage(
-          image: NetworkImage('https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.black.withValues(alpha: 0.6),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.amber.shade700,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Text(
-                    'AD',
-                    style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 1),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  "Master's Edge Series",
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                ),
-              ],
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                shape: const StadiumBorder(),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-              ),
-              child: const Text('VER MÁS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAdRequestBanner() {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const AddAdScreen()),
-        );
-      },
-      child: Container(
-        key: const ValueKey(1),
-        height: 90,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF2D3748), Color(0xFF1A202C)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.campaign, color: Colors.amber, size: 30),
-              ),
-              const SizedBox(width: 16),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '¿Quieres anunciarte aquí?',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                    ),
-                    Text(
-                      'Llega a miles de clientes locales',
-                      style: TextStyle(color: Colors.white70, fontSize: 11),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
