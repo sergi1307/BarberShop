@@ -411,7 +411,7 @@ class _AddAdScreenState extends State<AddAdScreen> {
         const Text('Datos de Pago', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         const SizedBox(height: 4),
         const Text('Configura tu domiciliación SEPA', style: TextStyle(fontSize: 14, color: Colors.grey)),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -453,6 +453,100 @@ class _AddAdScreenState extends State<AddAdScreen> {
               Text(
                 'Al proporcionar tu IBAN, autorizas a BarberShop a enviar instrucciones a tu banco para adeudar en tu cuenta de acuerdo con las condiciones.',
                 style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.receipt_long_outlined, size: 18, color: Colors.black87),
+                  const SizedBox(width: 8),
+                  const Text('Datos Fiscales', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Necesarios para la emisión de facturas.',
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                'Razón Social / Nombre Fiscal',
+                'Ej. Barberías García S.L.',
+                textCapitalization: TextCapitalization.words,
+                validator: (val) {
+                  if (val == null || val.isEmpty) return 'La razón social es obligatoria';
+                  if (val.length < 3) return 'Nombre demasiado corto';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildTextField(
+                'CIF / NIF',
+                'Ej. B12345678',
+                validator: (val) {
+                  if (val == null || val.isEmpty) return 'El CIF/NIF es obligatorio';
+                  final clean = val.trim().toUpperCase();
+                  if (!RegExp(r'^[A-Z0-9]{8,9}$').hasMatch(clean)) {
+                    return 'Formato inválido (Ej. B12345678 o 12345678Z)';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildTextField(
+                'Dirección Fiscal',
+                'Ej. Calle Mayor 10, 3º A',
+                textCapitalization: TextCapitalization.sentences,
+                validator: (val) {
+                  if (val == null || val.isEmpty) return 'La dirección fiscal es obligatoria';
+                  if (val.length < 5) return 'Dirección demasiado corta';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 110,
+                    child: _buildTextField(
+                      'Cód. Postal',
+                      'Ej. 28001',
+                      isNumber: true,
+                      validator: (val) {
+                        if (val == null || val.isEmpty) return 'Obligatorio';
+                        if (!RegExp(r'^\d{5}$').hasMatch(val.trim())) {
+                          return 'Debe ser 5 dígitos';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildTextField(
+                      'Ciudad',
+                      'Ej. Madrid',
+                      textCapitalization: TextCapitalization.words,
+                      validator: (val) {
+                        if (val == null || val.isEmpty) return 'La ciudad es obligatoria';
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
