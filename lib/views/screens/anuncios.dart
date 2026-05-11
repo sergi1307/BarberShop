@@ -15,17 +15,13 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
   bool isShowingDashboard = false;
   bool isAdvertiser = true;
 
-  // --- BUSCADOR ---
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-
-  // --- VARIABLES DE ESTADO REALES ---
+  // --- VARIABLES DE ESTADO ---
   bool _isCampaignDeleted = false; 
   String _tituloCampana = "Master's Edge Series"; 
   String _cpcCampana = "\$1.42"; 
   bool _isCampaignActive = true; 
 
-  // --- LISTA DE ANUNCIOS COMPLETA (Recuperada) ---
+  // --- LISTA DE ANUNCIOS ---
   final List<Map<String, dynamic>> adsData = const [
     {
       'name': 'Modern Tech Gadgets',
@@ -50,20 +46,19 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
     },
   ];
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
+  // --- FUNCIÓN NUEVA: Calcula los últimos 7 días terminando HOY ---
+  List<String> _getLast7DaysLabels() {
+    final now = DateTime.now();
+    final List<String> labels = [];
+    final List<String> weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
-  List<Map<String, dynamic>> get _filteredAds {
-    if (_searchQuery.isEmpty) return adsData;
-    final query = _searchQuery.toLowerCase();
-    return adsData.where((ad) {
-      return (ad['name'] as String).toLowerCase().contains(query) ||
-             (ad['desc'] as String).toLowerCase().contains(query) ||
-             (ad['tag'] as String).toLowerCase().contains(query);
-    }).toList();
+    // Bucle que va desde hace 6 días hasta hoy (0)
+    for (int i = 6; i >= 0; i--) {
+      final date = now.subtract(Duration(days: i));
+      // date.weekday devuelve un número del 1 (Lunes) al 7 (Domingo)
+      labels.add(weekDays[date.weekday - 1]);
+    }
+    return labels;
   }
 
   @override
@@ -95,7 +90,6 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
         ),
         body: Column(
           children: [
-            // --- SELECTOR SUPERIOR (Diseño original) ---
             if (isAdvertiser)
               Container(
                 color: isShowingDashboard ? const Color(0xFFF4F6F9) : Colors.grey[50],
@@ -112,7 +106,6 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
                 ),
               ),
 
-            // --- CONTENIDO ---
             Expanded(
               child: isShowingDashboard ? _buildDashboardContent() : _buildAdsContent(),
             ),
@@ -146,71 +139,17 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
     );
   }
 
-  // --- VISTA 1: LISTA DE ANUNCIOS ---
   Widget _buildAdsContent() {
-    final filtered = _filteredAds;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Barra de búsqueda
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-          child: TextField(
-            controller: _searchController,
-            onChanged: (value) => setState(() => _searchQuery = value),
-            decoration: InputDecoration(
-              hintText: 'Buscar anuncios...',
-              hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-              prefixIcon: const Icon(Icons.search, color: Colors.black54),
-              suffixIcon: _searchQuery.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.close, color: Colors.black54, size: 18),
-                      onPressed: () => setState(() {
-                        _searchController.clear();
-                        _searchQuery = '';
-                      }),
-                    )
-                  : null,
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(vertical: 14),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: Colors.grey.shade200),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Colors.black, width: 1.5),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Expanded(
-          child: filtered.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.search_off, size: 56, color: Colors.grey[300]),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Sin resultados para "$_searchQuery"',
-                        style: TextStyle(color: Colors.grey[500], fontSize: 14),
-                      ),
-                    ],
-                  ),
-                )
-              : ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  children: [
-                    const Text('Featured Ads', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87)),
-                    const SizedBox(height: 20),
-                    ...filtered.map((ad) => _buildFeaturedCard(ad)),
-                  ],
-                ),
-        ),
-      ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Featured Ads', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87)),
+          const SizedBox(height: 20),
+          Column(children: adsData.map((ad) => _buildFeaturedCard(ad)).toList()),
+        ],
+      ),
     );
   }
 
@@ -249,8 +188,10 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
     );
   }
 
-  // --- VISTA 2: DASHBOARD (Recuperado con todas sus piezas) ---
   Widget _buildDashboardContent() {
+    // Llamamos a la función para tener las etiquetas de la semana actualizadas al día de hoy
+    final labels = _getLast7DaysLabels();
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Column(
@@ -261,17 +202,26 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
           const Text('Información precisa sobre tu rendimiento.', style: TextStyle(fontSize: 14, color: Color(0xFF6B7280))),
           const SizedBox(height: 24),
 
-          // Botones de acción
           Row(
             children: [
-              Expanded(child: OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(backgroundColor: Colors.white, side: const BorderSide(color: Color(0xFFE5E7EB), width: 1.5), padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: const Text('Exportar', style: TextStyle(color: Color(0xFF374151), fontWeight: FontWeight.w600)))),
+              const Expanded(child: SizedBox()), 
               const SizedBox(width: 12),
-              Expanded(child: ElevatedButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAdScreen())), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4361EE), elevation: 0, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: const Text('Nuevo Anuncio', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAdScreen())),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4361EE),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('Nuevo Anuncio', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 24),
 
-          // Métricas
           _buildMetricCard(title: 'ALCANCE TOTAL', value: '1.2M', trendText: '+12.5%', isPositive: true, iconData: Icons.groups_outlined, iconColor: const Color(0xFF4361EE), iconBgColor: const Color(0xFFEFF6FF)),
           const SizedBox(height: 16),
           _buildMetricCard(title: 'TASA DE INTERACCIÓN', value: '4.82%', trendText: '+0.4%', isPositive: true, iconData: Icons.ads_click, iconColor: const Color(0xFF10B981), iconBgColor: const Color(0xFFECFDF5)),
@@ -279,7 +229,7 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
           _buildMetricCard(title: 'GASTO EN PUBLICIDAD', value: '\$14,250', trendText: '-2.1%', isPositive: false, iconData: Icons.credit_card, iconColor: const Color(0xFFF97316), iconBgColor: const Color(0xFFFFF7ED)),
           const SizedBox(height: 24),
 
-          // Gráfico
+          // --- GRÁFICO DINÁMICO (Usando los labels calculados) ---
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFF3F4F6)), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))]),
@@ -295,7 +245,16 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [_buildBarDay('Lun', 0.4, 0.2), _buildBarDay('Mar', 0.6, 0.4), _buildBarDay('Mié', 0.8, 0.5), _buildBarDay('Jue', 0.5, 0.3), _buildBarDay('Vie', 0.7, 0.45), _buildBarDay('Sáb', 0.9, 0.6), _buildBarDay('Dom', 0.45, 0.25)],
+                    children: [
+                      // Usamos el array 'labels' que hemos creado dinámicamente arriba
+                      _buildBarDay(labels[0], 0.4, 0.2), 
+                      _buildBarDay(labels[1], 0.6, 0.4), 
+                      _buildBarDay(labels[2], 0.8, 0.5), 
+                      _buildBarDay(labels[3], 0.5, 0.3), 
+                      _buildBarDay(labels[4], 0.7, 0.45), 
+                      _buildBarDay(labels[5], 0.9, 0.6), 
+                      _buildBarDay(labels[6], 0.45, 0.25)
+                    ],
                   ),
                 ),
               ],
@@ -303,7 +262,6 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
           ),
           const SizedBox(height: 30),
 
-          // Campañas Activas
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
@@ -318,7 +276,6 @@ class _LuxeCutsScreenState extends State<LuxeCutsScreen> {
     );
   }
 
-  // --- WIDGETS AUXILIARES (Dashboard) ---
   Widget _buildCampaignCard(String title, String type, String ctr, String cpc, String roas) {
     if (_isCampaignDeleted) return const SizedBox.shrink(); 
 
