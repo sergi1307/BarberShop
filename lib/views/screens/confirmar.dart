@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'reservas.dart';
+import 'dart:async';
+import '../widgets/ad_banner.dart';
 
 class SummaryScreen extends StatefulWidget {
   final String location;
@@ -24,6 +26,43 @@ class SummaryScreen extends StatefulWidget {
 class _SummaryScreenState extends State<SummaryScreen> {
   // Variable para controlar el desplegable (Dropdown)
   String selectedReminder = 'Sin recordatorio';
+  int _currentAdIndex = 0;
+  late Timer _bannerTimer;
+
+  final List<Map<String, dynamic>> _ads = [
+    {
+      'id': '103',
+      'name': 'Kits de barba al 30% Dto.',
+      'desc': 'Todo lo que necesitas para el cuidado de tu barba con un descuento exclusivo.',
+      'image': 'https://images.unsplash.com/photo-1593702295094-ada74bc1099a?w=500',
+      'tag': 'OFFER',
+    },
+    {
+      'id': '104',
+      'name': 'Premium Aftershave',
+      'desc': 'Frescura instantánea después de cada afeitado. Calidad profesional.',
+      'image': 'https://images.unsplash.com/photo-1621607512214-68297480165e?w=600',
+      'tag': 'SKINCARE',
+    },
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _bannerTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (mounted) {
+        setState(() {
+          _currentAdIndex = (_currentAdIndex + 1) % _ads.length;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _bannerTimer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,61 +172,18 @@ class _SummaryScreenState extends State<SummaryScreen> {
             // --- BANNER PUBLICITARIO (Debajo de la tarjeta) ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                height: 90,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  image: const DecorationImage(
-                    image: NetworkImage('https://images.unsplash.com/photo-1593702295094-ada74bc1099a?w=500'), // Imagen de productos de barbería
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Colors.black.withValues(alpha: 0.65), // Overlay oscuro
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Colors.amber.shade700,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: const Text(
-                              'AD',
-                              style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 1),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Kits de barba al 30% Dto.',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
-                          ),
-                        ],
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Abriendo tienda...')));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          shape: const StadiumBorder(),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          minimumSize: const Size(0, 32),
-                        ),
-                        child: const Text('COMPRAR', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                child: BannerAdWidget(
+                  key: ValueKey(_currentAdIndex),
+                  id: _ads[_currentAdIndex]['id'],
+                  name: _ads[_currentAdIndex]['name'],
+                  desc: _ads[_currentAdIndex]['desc'],
+                  image: _ads[_currentAdIndex]['image'],
+                  tag: _ads[_currentAdIndex]['tag'],
+                  onTap: () {
+                    // Action for confirmation ads
+                  },
                 ),
               ),
             ),
